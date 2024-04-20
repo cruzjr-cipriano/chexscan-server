@@ -1,0 +1,4 @@
+flask
+torchvision
+flask-cors
+Pillow

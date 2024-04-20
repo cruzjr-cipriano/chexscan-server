@@ -8,7 +8,13 @@ import io
 import base64
 
 app = Flask(__name__)
-CORS(app)
+# Add CORS headers for all routes
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
+    return response
 
 # Load the model architecture
 model = resnet18(pretrained=True)
@@ -17,7 +23,7 @@ model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
 model.load_state_dict(torch.load('model.pth'))
 model.eval()
 
-@app.route('/', methods=['GET'])
+@app.route('/test')
 def get_home():
     return "Hello World"
 
@@ -60,4 +66,4 @@ def upload_image():
     return jsonify({'prediction': predicted_class})
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8081)
+    app.run(host="0.0.0.0", debug=True, port=5051)
